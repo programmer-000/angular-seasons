@@ -1,0 +1,64 @@
+<div class="container" fxFlexFill fxLayout="column" gdGap=" 15px 15px" fxLayoutAlign="space-between">
+
+  <app-filter-board fxFlex="100%"
+                    (groupBy)="groupBy($event)"
+                    (filter)="filter($event)"
+                    (search)="search($event)"
+                    (sort)="sort($event)"
+  >
+  </app-filter-board>
+
+  <div class="display-grid-list">
+    <div class="example-button-row">
+      <button mat-button
+              (click)="onDisplayModeChange(1)"
+              [ngClass]="{'active': displayMode === 1}">
+        <span class="material-icons icon-custom">view_module</span>
+      </button>
+
+      <button mat-button
+              (click)="onDisplayModeChange(2)"
+              [ngClass]="{'active': displayMode === 2}">
+        <span class="material-icons icon-custom">view_list</span>
+      </button>
+    </div>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="center center">
+    <ng-template [ngIf]="groupType$ | async" [ngIfElse]="months">
+      <mat-card class="card-row" *ngFor="let groupedMonths of groupedMonths$ | async">
+        <mat-card-header fxLayoutAlign="center center">
+          <mat-card-title>
+            {{groupedMonths.groupName}}
+          </mat-card-title>
+        </mat-card-header>
+        <div fxLayout="row wrap" fxLayoutAlign="center center">
+          <ng-container *ngTemplateOutlet="months;context:{months: groupedMonths.months}"></ng-container>
+        </div>
+      </mat-card>
+    </ng-template>
+  </div>
+
+  <div>
+    <ng-template #months let-months="months">
+      <mat-card
+        *ngFor="let month of months || (months$ | async)"
+        [ngClass]="{
+        'wrap-card-grid': displayMode === 1,
+        'wrap-card-list': displayMode === 2
+        }">
+        <div
+          [ngClass]="{'img-grid': displayMode === 2}">
+          <img class="month-card__img" [src]="month?.image" alt="Photo of a Shiba Inu">
+        </div>
+        <div class="month-card__content">
+          <mat-card-title class="month-card__title">{{month.name}}</mat-card-title>
+          <mat-card-subtitle>{{month.date}}</mat-card-subtitle>
+          <p>{{month.description}}</p>
+          <p>Days count {{month?.days_count}}</p>
+        </div>
+      </mat-card>
+    </ng-template>
+  </div>
+
+</div>
